@@ -9,3 +9,15 @@ book
 .vscode
 *.ipynb
 *.stronghold
+/.idea
+alice-database
+*.log
+*/walletdb
+/pingdb
+/pongdb
+offline_walletdb
+online_walletdb
+addresses.json
+prepared_transaction.json
+signed_transaction.json
+wallet/test-storage

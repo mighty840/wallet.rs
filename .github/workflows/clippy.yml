@@ -3,13 +3,18 @@ name: Clippy
 on:
   push:
     branches:
-      - master
+      - main
   pull_request:
     branches:
-      - master
+      - main
+      - dev
       - develop
     paths-ignore:
       - 'specs/**'
+
+concurrency: 
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   clippy:
@@ -18,7 +23,7 @@ jobs:
       fail-fast: false
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Install clippy with stable toolchain
       uses: actions-rs/toolchain@v1
       with:
@@ -37,15 +42,3 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         args: --all-features --all-targets -- -D warnings
         name: core
-    - name: nodejs binding clippy check
-      uses: actions-rs/clippy-check@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        args: --manifest-path ./bindings/nodejs/native/Cargo.toml --all-features --all-targets -- -D warnings
-        name: nodejs-binding
-    - name: python binding clippy check
-      uses: actions-rs/clippy-check@v1
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        args: --manifest-path ./bindings/python/native/Cargo.toml --all-features --all-targets -- -D warnings
-        name: python-binding
