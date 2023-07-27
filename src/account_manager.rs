@@ -92,7 +92,11 @@ enum ManagerStorage {
     /// Stronghold storage.
     Stronghold,
     /// RocksDB storage.
+    #[cfg(feature = "rocksdb")]
     Rocksdb,
+    /// JammDB storage
+    #[cfg(feature = "jammdb")]
+    Jammdb
 }
 
 fn storage_password_to_encryption_key(password: &str) -> [u8; 32] {
@@ -119,7 +123,7 @@ impl Default for AccountManagerBuilder {
         Self {
             storage_folder: PathBuf::from(DEFAULT_STORAGE_FOLDER),
             storage_file_name: None,
-            storage: ManagerStorage::Rocksdb,
+            storage: ManagerStorage::Jammdb,
             polling_interval: Duration::from_millis(30_000),
             skip_polling: false,
             storage_encryption_key: None,
@@ -220,6 +224,7 @@ impl AccountManagerBuilder {
                     true,
                 )
             }
+            #[cfg(feature = "rocksdb")]
             ManagerStorage::Rocksdb => {
                 let path = self
                     .storage_folder
@@ -230,6 +235,21 @@ impl AccountManagerBuilder {
                     None
                 } else {
                     let storage = crate::storage::rocksdb::RocksdbStorageAdapter::new(&path)?;
+                    Some(Box::new(storage) as Box<dyn StorageAdapter + Send + Sync>)
+                };
+                (storage, path, false)
+            }
+            #[cfg(feature = "jammdb")]
+            ManagerStorage::Jammdb => {
+                let path = self
+                    .storage_folder
+                    .join(self.storage_file_name.as_deref().unwrap_or(ROCKSDB_FILENAME));
+                fs::create_dir_all(&self.storage_folder)?;
+                // rocksdb storage already exists; no need to create a new instance
+                let storage = if crate::storage::get(&path).await.is_ok() {
+                    None
+                } else {
+                    let storage = crate::storage::jammdb::JammdbStorageAdapter::new(&path)?;
                     Some(Box::new(storage) as Box<dyn StorageAdapter + Send + Sync>)
                 };
                 (storage, path, false)

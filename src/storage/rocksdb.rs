@@ -1,23 +1,31 @@
 // Copyright 2020 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
+#[cfg(feature = "rocksdb")]
 use super::StorageAdapter;
+#[cfg(feature = "rocksdb")]
 use rocksdb::{DBCompressionType, Options, WriteBatch, DB};
+#[cfg(feature = "rocksdb")]
 use std::{collections::HashMap, path::Path, sync::Arc};
+#[cfg(feature = "rocksdb")]
 use tokio::sync::Mutex;
 
 /// The storage id.
+#[cfg(feature = "rocksdb")]
 pub const STORAGE_ID: &str = "RocksDB";
 
 /// Key value storage adapter.
+#[cfg(feature = "rocksdb")]
 pub struct RocksdbStorageAdapter {
     db: Arc<Mutex<DB>>,
 }
 
+#[cfg(feature = "rocksdb")]
 fn storage_err<E: ToString>(error: E) -> crate::Error {
     crate::Error::Storage(error.to_string())
 }
 
+#[cfg(feature = "rocksdb")]
 impl RocksdbStorageAdapter {
     /// Initialises the storage adapter.
     pub fn new(path: impl AsRef<Path>) -> crate::Result<Self> {
@@ -32,6 +40,7 @@ impl RocksdbStorageAdapter {
     }
 }
 
+#[cfg(feature = "rocksdb")]
 #[async_trait::async_trait]
 impl StorageAdapter for RocksdbStorageAdapter {
     fn id(&self) -> &'static str {

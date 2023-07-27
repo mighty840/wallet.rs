@@ -7,6 +7,9 @@ pub mod rocksdb;
 /// Stronghold storage.
 pub mod stronghold;
 
+/// JammDB storage.
+pub mod jammdb;
+
 #[cfg(feature = "participation")]
 use crate::address::AddressWrapper;
 use crate::{
