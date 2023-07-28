@@ -26,7 +26,7 @@ impl JammdbStorageAdapter {
         let db = OpenOptions::new().pagesize(4096).num_pages(32).open(path).map_err(storage_err)?;
         // create a default bucket
         let tx = db.tx(true).map_err(storage_err)?;
-        tx.create_bucket(BUCKET_NAME).map_err(storage_err)?;
+        tx.get_or_create_bucket(BUCKET_NAME).map_err(storage_err)?;
         tx.commit().map_err(storage_err)?;
         Ok(Self {
             db: Arc::new(Mutex::new(db)),
