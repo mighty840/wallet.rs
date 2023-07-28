@@ -121,10 +121,10 @@ impl AccountManagerBuilder {
                 return Err(crate::Error::MissingParameter("secret_manager"));
             }
         }
-        #[cfg(all(feature = "rocksdb", feature = "storage"))]
+        #[cfg(all(feature = "jammdb", feature = "storage"))]
         let storage =
-            crate::storage::adapter::rocksdb::RocksdbStorageAdapter::new(storage_options.storage_path.clone())?;
-        #[cfg(all(not(feature = "rocksdb"), feature = "storage"))]
+            crate::storage::adapter::jammdb::JammdbStorageAdapter::new(storage_options.storage_path.clone())?;
+        #[cfg(all(not(feature = "jammdb"), feature = "storage"))]
         let storage = Memory::default();
 
         #[cfg(feature = "storage")]

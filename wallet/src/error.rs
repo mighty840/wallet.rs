@@ -160,3 +160,10 @@ impl From<rocksdb::Error> for Error {
         Self::Storage(error.to_string())
     }
 }
+
+#[cfg(feature = "jammdb")]
+impl From<jammdb::Error> for Error {
+    fn from(error: jammdb::Error) -> Self {
+        Self::Storage(error.to_string())
+    }
+}

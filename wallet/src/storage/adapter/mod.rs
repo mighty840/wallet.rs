@@ -7,6 +7,10 @@ pub mod memory;
 #[cfg_attr(docsrs, doc(cfg(feature = "rocksdb")))]
 pub mod rocksdb;
 
+#[cfg(feature = "jammdb")]
+#[cfg_attr(docsrs, doc(cfg(feature = "rocksdb")))]
+pub mod jammdb;
+
 use std::collections::HashMap;
 
 /// The storage adapter.
