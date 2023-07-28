@@ -67,8 +67,8 @@ quickcheck_macros = { version = "1.0", default-features = false }
 
 [features]
 default = ["stronghold", "jammdb"]
-rocksdb = []
-jammdb = []
+rocksdb = ["dep:rocksdb"]
+jammdb = ["dep:jammdb"]
 ledger-nano = ["iota-ledger"]
 ledger-nano-simulator = ["iota-ledger"]
 stronghold = []
