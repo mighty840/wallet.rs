@@ -3,7 +3,7 @@
 
 use super::StorageAdapter;
 use jammdb::{DB, OpenOptions};
-use std::{collections::HashMap, path::Path, sync::Arc, fmt::Debug};
+use std::{collections::HashMap, path::{Path, PathBuf}, sync::Arc, fmt::Debug};
 use tokio::sync::Mutex;
 
 /// The storage id.
@@ -25,7 +25,15 @@ pub struct JammdbStorageAdapter {
 impl JammdbStorageAdapter {
     /// Initialises the storage adapter.
     pub fn new(path: impl AsRef<Path>) -> crate::Result<Self> {
-        let db = OpenOptions::new().pagesize(4096).num_pages(32).open(path)?;
+        let mut db_path = PathBuf::from("./sdk-wallet.db");
+        let dir_path = path.as_ref().to_string_lossy().to_string();
+        let mut temp_path = PathBuf::from(dir_path);
+        if path.as_ref().is_dir() {
+            temp_path.push(db_path);
+
+        }
+        db_path = temp_path;
+        let db = OpenOptions::new().pagesize(4096).num_pages(32).open(db_path)?;
         // create a default bucket
         let tx = db.tx(true)?;
         tx.get_or_create_bucket(BUCKET_NAME)?;
