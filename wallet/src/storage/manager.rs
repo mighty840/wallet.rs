@@ -37,7 +37,7 @@ impl Default for ManagerStorage {
         return Self::JammDB;
         #[cfg(target_family = "wasm")]
         return Self::Wasm;
-        #[cfg(not(any(feature = "rocksdb", target_family = "wasm")))]
+        #[cfg(not(any(feature = "jammdb", target_family = "wasm")))]
         Self::Memory
     }
 }

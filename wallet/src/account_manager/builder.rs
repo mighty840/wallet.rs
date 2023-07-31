@@ -16,7 +16,7 @@ use tokio::sync::RwLock;
 
 #[cfg(feature = "events")]
 use crate::events::EventEmitter;
-#[cfg(all(feature = "storage", not(feature = "rocksdb")))]
+#[cfg(all(feature = "storage", not(feature = "jammdb")))]
 use crate::storage::adapter::memory::Memory;
 #[cfg(feature = "storage")]
 use crate::storage::{constants::default_storage_path, manager::ManagerStorage};
