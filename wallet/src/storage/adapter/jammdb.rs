@@ -36,7 +36,8 @@ impl JammdbStorageAdapter {
         let db = OpenOptions::new().pagesize(4096).num_pages(32).open(db_path)?;
         // create a default bucket
         let tx = db.tx(true)?;
-        tx.get_or_create_bucket(BUCKET_NAME)?;
+        let bucket = tx.get_or_create_bucket(BUCKET_NAME)?;
+        bucket.put("INITIAL_KEY", "INIT_VALUE")?; // needs some initial value
         tx.commit()?;
         Ok(Self {
             db: Arc::new(Mutex::new(db)),
@@ -56,7 +57,7 @@ impl StorageAdapter for JammdbStorageAdapter {
         let bucket = tx.get_bucket(BUCKET_NAME)?;
         match bucket.get(key) {
             Some(r) => Ok(Some(String::from_utf8_lossy(&r.kv().value()).to_string())),
-            None => Err(crate::Error::from(jammdb::Error::KeyValueMissing))
+            None => Ok(None)
         }
     }
 
@@ -86,6 +87,7 @@ impl StorageAdapter for JammdbStorageAdapter {
         let bucket = tx.get_bucket(BUCKET_NAME)?;
 
         bucket.delete(key)?;
+        tx.commit()?;
         Ok(())
     }
 }
